@@ -439,7 +439,11 @@ let currentVal = 1;
 // ---------- navegación ----------
 function go(screenId){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-'+screenId).classList.add('active');
+  const target = document.getElementById('screen-'+screenId);
+  target.classList.add('active');
+  target.scrollTop = 0;
+  const scrollable = target.querySelector('.stats-body, .grid-8');
+  if(scrollable) scrollable.scrollTop = 0;
   if(screenId === 'stats') renderStats();
 }
 document.querySelectorAll('[data-go]').forEach(el=>{
