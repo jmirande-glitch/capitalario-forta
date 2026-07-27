@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Cargar reflexión · Capital de Gracias</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Abel&family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+
+  :root{
+    --navy: #1B3A5C;
+    --navy-deep: #16324F;
+    --gold: #C9962C;
+    --gold-light: #E3BD74;
+    --cream: #F6EFE0;
+    --ink: #1F2733;
+    --white: #FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100%;background:var(--navy);}
+  body{
+    font-family:'Open Sans',sans-serif;
+    color:var(--ink);
+    display:flex; justify-content:center;
+  }
+  #app{
+    width:100%; max-width:520px;
+    min-height:100vh;
+    background:var(--cream);
+    box-shadow:0 0 60px rgba(0,0,0,.5);
+  }
+
+  .header{
+    background:linear-gradient(160deg, #2E5480, var(--navy) 60%, var(--navy-deep));
+    color:var(--white);
+    padding:26px 24px 22px;
+    text-align:center;
+  }
+  .header .logo-wrap{
+    background:var(--white); border-radius:14px; display:inline-block;
+    padding:6px 12px 5px; margin-bottom:10px;
+    box-shadow:0 8px 18px rgba(0,0,0,.28);
+  }
+  .header .logo-wrap img{ display:block; width:80px; height:auto; }
+  .header h1{
+    font-family:'Abel',sans-serif; font-weight:400;
+    font-size:24px; margin:0 0 4px;
+  }
+  .header p{ margin:0; font-size:13px; color:#CBD8E4; }
+
+  .content{ padding:26px 22px 40px; }
+
+  /* ---------- Password gate ---------- */
+  #gate{ text-align:center; padding-top:20px; }
+  #gate p{ font-size:14.5px; color:var(--ink); margin:0 0 16px; line-height:1.5; }
+  #gate input{
+    width:100%; padding:14px 16px; font-size:16px;
+    border:1.5px solid #d8cca3; border-radius:12px;
+    background:var(--white); color:var(--ink);
+    margin-bottom:12px; font-family:'Open Sans',sans-serif;
+  }
+  #gate-error{
+    color:#a83e3e; font-size:13px; font-weight:700;
+    margin:0 0 12px; display:none;
+  }
+
+  /* ---------- Form ---------- */
+  #form-wrap{ display:none; }
+  label{
+    display:block; font-size:12.5px; font-weight:700;
+    letter-spacing:.03em; text-transform:uppercase;
+    color:var(--navy); margin:20px 0 8px;
+  }
+  label:first-of-type{ margin-top:0; }
+  input[type="text"], input[type="date"], textarea{
+    width:100%; padding:13px 14px; font-size:15px;
+    border:1.5px solid #d8cca3; border-radius:12px;
+    background:var(--white); color:var(--ink);
+    font-family:'Open Sans',sans-serif;
+  }
+  textarea{
+    min-height:260px; line-height:1.55; resize:vertical;
+  }
+  .hint{
+    font-size:12.5px; color:#8a8060; margin-top:6px; line-height:1.4;
+  }
+
+  .btn{
+    width:100%; padding:17px; border:none; border-radius:16px;
+    background:var(--gold); color:var(--navy-deep);
+    font-size:17px; font-weight:800; font-family:'Open Sans',sans-serif;
+    cursor:pointer; margin-top:26px;
+  }
+  .btn:active{ filter:brightness(.94); }
+  .btn:disabled{ opacity:.6; cursor:default; }
+
+  #status{
+    margin-top:16px; padding:14px 16px; border-radius:12px;
+    font-size:14px; font-weight:600; text-align:center;
+    display:none;
+  }
+  #status.ok{ background:#e4f0e0; color:#2f5c2a; display:block; }
+  #status.err{ background:#f6dede; color:#a83e3e; display:block; }
+
+  .divider{
+    margin:34px 0 18px; border:none; border-top:1px solid #e6dcc4;
+  }
+  .recent-title{
+    font-family:'Abel',sans-serif; font-size:19px; color:var(--navy);
+    margin:0 0 12px;
+  }
+  .recent-item{
+    padding:10px 0; border-bottom:1px solid #e6dcc4;
+  }
+  .recent-item:last-child{ border-bottom:none; }
+  .recent-item .rtitle{ font-weight:700; font-size:14px; color:var(--navy); }
+  .recent-item .rdate{ font-size:12px; color:#8a8060; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="header">
+    <div class="logo-wrap">
+      <div style="font-family:'Abel',sans-serif; font-size:22px; color:var(--navy); padding:4px 10px;">CDG</div>
+    </div>
+    <h1>Cargar reflexión</h1>
+    <p>Capital de Gracias · Fortalecimiento Matrimonial</p>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ PASSWORD GATE ============ -->
+    <div id="gate">
+      <p>Esta página permite publicar una nueva reflexión para todos los que usan la app. Ingresá la clave para continuar.</p>
+      <input type="text" id="gate-input" placeholder="Clave" autocomplete="off">
+      <p id="gate-error">Clave incorrecta. Probá de nuevo.</p>
+      <button class="btn" id="gate-btn">Entrar</button>
+    </div>
+
+    <!-- ============ FORM ============ -->
+    <div id="form-wrap">
+
+      <label for="f-titulo">Título</label>
+      <input type="text" id="f-titulo" value="Reflexión del día">
+
+      <label for="f-cuerpo">Texto de la reflexión</label>
+      <textarea id="f-cuerpo" placeholder="Pegá acá el texto completo...
+
+Separá cada párrafo con un renglón en blanco, así se ve igual de prolijo que en la app."></textarea>
+      <div class="hint">Dejá una línea vacía entre párrafo y párrafo (como cuando escribís un mensaje normal). La app los va a mostrar cada uno por separado.</div>
+
+      <label for="f-fecha">Fecha en la que se publica</label>
+      <input type="date" id="f-fecha">
+      <div class="hint">Ese día (a partir de las 00:00) la reflexión va a aparecer sola la primera vez que alguien entre a la app.</div>
+
+      <button class="btn" id="submit-btn">Publicar reflexión</button>
+      <div id="status"></div>
+
+      <hr class="divider">
+      <div class="recent-title">Últimas publicadas</div>
+      <div id="recent-list">
+        <p class="hint">Cargando...</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ---------- Supabase (mismo proyecto que la app principal) ----------
+const SUPABASE_URL = 'https://ztfghhrswuxkjckqsnug.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_yeCcnRZEHUWE-slzI36daw_dHnrFPxe';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ---------- Clave simple de acceso ----------
+// No es seguridad real (cualquiera que vea el código fuente puede leerla),
+// es solo para evitar cargas accidentales o de curiosos que encuentren el link.
+// Para cambiarla, editá el valor de PASSWORD acá abajo.
+const PASSWORD = 'forta2026';
+
+const gate = document.getElementById('gate');
+const gateInput = document.getElementById('gate-input');
+const gateError = document.getElementById('gate-error');
+const formWrap = document.getElementById('form-wrap');
+
+function unlock(){
+  gate.style.display = 'none';
+  formWrap.style.display = 'block';
+  sessionStorage.setItem('cdg_reflexion_unlocked', '1');
+  loadRecent();
+}
+
+if(sessionStorage.getItem('cdg_reflexion_unlocked') === '1'){
+  unlock();
+}
+
+document.getElementById('gate-btn').addEventListener('click', ()=>{
+  if(gateInput.value === PASSWORD){
+    gateError.style.display = 'none';
+    unlock();
+  } else {
+    gateError.style.display = 'block';
+  }
+});
+gateInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') document.getElementById('gate-btn').click();
+});
+
+// fecha de hoy por defecto en el selector
+document.getElementById('f-fecha').valueAsDate = new Date();
+
+async function loadRecent(){
+  const list = document.getElementById('recent-list');
+  const { data, error } = await sb
+    .from('cdg_reflexiones')
+    .select('titulo, fecha_publicacion')
+    .order('fecha_publicacion', { ascending: false })
+    .limit(5);
+  if(error){
+    list.innerHTML = '<p class="hint">No se pudo cargar la lista.</p>';
+    return;
+  }
+  if(data.length === 0){
+    list.innerHTML = '<p class="hint">Todavía no hay reflexiones cargadas.</p>';
+    return;
+  }
+  list.innerHTML = '';
+  data.forEach(r=>{
+    const d = new Date(r.fecha_publicacion + 'T00:00:00').toLocaleDateString('es-AR', { day:'numeric', month:'long', year:'numeric' });
+    const div = document.createElement('div');
+    div.className = 'recent-item';
+    div.innerHTML = `<div class="rtitle">${r.titulo}</div><div class="rdate">${d}</div>`;
+    list.appendChild(div);
+  });
+}
+
+document.getElementById('submit-btn').addEventListener('click', async ()=>{
+  const titulo = document.getElementById('f-titulo').value.trim();
+  const cuerpo = document.getElementById('f-cuerpo').value.trim();
+  const fecha = document.getElementById('f-fecha').value;
+  const status = document.getElementById('status');
+  const btn = document.getElementById('submit-btn');
+
+  status.className = '';
+  status.style.display = 'none';
+
+  if(!titulo || !cuerpo || !fecha){
+    status.className = 'err';
+    status.textContent = 'Completá el título, el texto y la fecha antes de publicar.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Publicando...';
+
+  const { error } = await sb
+    .from('cdg_reflexiones')
+    .insert({ titulo, cuerpo, fecha_publicacion: fecha });
+
+  btn.disabled = false;
+  btn.textContent = 'Publicar reflexión';
+
+  if(error){
+    console.error(error);
+    status.className = 'err';
+    status.textContent = 'No se pudo publicar. Revisá tu conexión e intentá de nuevo.';
+    return;
+  }
+
+  status.className = 'ok';
+  status.textContent = '¡Reflexión publicada!';
+  document.getElementById('f-cuerpo').value = '';
+  document.getElementById('f-titulo').value = 'Reflexión del día';
+  document.getElementById('f-fecha').valueAsDate = new Date();
+  loadRecent();
+});
+</script>
+</body>
+</html>
