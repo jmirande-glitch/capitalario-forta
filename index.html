@@ -482,25 +482,25 @@ const CATS = [
 
 // Frases del P. José Kentenich, rotan una por día
 // ---------- Reflexiones ----------
-// Cada reflexión tiene una fecha de "disponible desde"; para agregar
-// una nueva, sumá un objeto más a este array con el siguiente id.
-const REFLECTIONS = [
-  {
-    id: 1,
-    date: '2026-01-01',
-    title: 'Reflexión del día',
-    body: [
-      "Trabajar para el Forta es mucho más que organizar actividades. Es preparar un espacio para que Dios pueda encontrarse con otros matrimonios y renovar sus corazones.",
-      "En el camino habrá cansancio, diferencias de opinión y muchas tareas ocultas que quizá nadie vea. Pero justamente allí está la riqueza de nuestro servicio: en ofrecer cada esfuerzo como una contribución al Capital de Gracias, confiando en que la Mater transforma nuestra pequeña entrega en abundantes frutos.",
-      "No buscamos hacer un retiro perfecto, sino ser instrumentos disponibles. Cuando trabajamos unidos, con humildad, alegría y espíritu de familia, nuestro testimonio habla tanto como las charlas que se compartirán.",
-      "Que cada reunión, cada llamado, cada detalle preparado con amor sea una oración silenciosa. Y que, al finalizar el retiro, podamos decir con sencillez: \u201cNada sin Ti, nada sin nosotros\u201d, sabiendo que fue la Mater quien condujo la obra y nosotros solo tuvimos la gracia de colaborar con Ella."
-    ]
+// Las reflexiones viven en la tabla cdg_reflexiones de Supabase.
+// Se cargan (sin tocar código) desde la página cargar-reflexion.html.
+async function fetchReflections(){
+  const hoy = new Date().toISOString().slice(0,10);
+  const { data, error } = await sb
+    .from('cdg_reflexiones')
+    .select('id, titulo, cuerpo, fecha_publicacion')
+    .lte('fecha_publicacion', hoy)
+    .order('fecha_publicacion', { ascending: true });
+  if(error){
+    console.error('Error leyendo reflexiones:', error);
+    return [];
   }
-];
-
-function reflectionsAvailable(){
-  const now = new Date();
-  return REFLECTIONS.filter(r => new Date(r.date + 'T00:00:00') <= now).sort((a,b)=> a.id - b.id);
+  return data.map(r => ({
+    id: r.id,
+    date: r.fecha_publicacion,
+    title: r.titulo,
+    body: r.cuerpo.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
+  }));
 }
 
 function openReflection(refl){
@@ -517,8 +517,8 @@ document.getElementById('reflection-close').addEventListener('click', ()=>{
   document.getElementById('reflection-overlay').classList.remove('show');
 });
 
-function renderReflectionsList(){
-  const avail = reflectionsAvailable();
+async function renderReflectionsList(){
+  const avail = await fetchReflections();
   const list = document.getElementById('reflections-list-items');
   list.innerHTML = '';
   if(avail.length === 0){
@@ -537,16 +537,16 @@ function renderReflectionsList(){
     list.appendChild(item);
   });
 }
-document.getElementById('reflection-trigger').addEventListener('click', ()=>{
-  renderReflectionsList();
+document.getElementById('reflection-trigger').addEventListener('click', async ()=>{
   document.getElementById('reflections-list-overlay').classList.add('show');
+  await renderReflectionsList();
 });
 document.getElementById('reflections-list-close').addEventListener('click', ()=>{
   document.getElementById('reflections-list-overlay').classList.remove('show');
 });
 
-function checkNewReflection(){
-  const avail = reflectionsAvailable();
+async function checkNewReflection(){
+  const avail = await fetchReflections();
   if(avail.length === 0) return;
   const latest = avail[avail.length - 1];
   const lastSeen = parseInt(localStorage.getItem('cdg_last_reflection_seen') || '0');
