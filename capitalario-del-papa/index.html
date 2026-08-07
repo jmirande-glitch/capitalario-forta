@@ -233,9 +233,11 @@
     background:radial-gradient(120% 140% at 50% -20%, #2E5480 0%, var(--navy) 55%, var(--navy-deep) 100%);
     color:var(--white); z-index:80;
   }
-  .prov-header{ text-align:center; padding:34px 24px 10px; }
-  .prov-header .logo-wrap{ margin-bottom:12px; }
-  .prov-header h2{ margin:0 0 4px; font-size:22px; font-weight:400; }
+  .prov-header{ text-align:center; padding:28px 24px 8px; }
+  .prov-header .logo-wrap{ margin-bottom:10px; }
+  .prov-header .papa-photo-ring{ margin:2px auto 10px; }
+  .prov-header h2{ margin:0 0 8px; font-size:22px; font-weight:400; }
+  .prov-header .prov-msg{ margin:0 auto 8px; font-size:14px; color:var(--gold-light); font-weight:700; max-width:320px; line-height:1.4; }
   .prov-header p{ margin:0; font-size:13px; color:#CBD8E4; max-width:320px; margin:0 auto; }
   .prov-scroll{ flex:1; overflow-y:auto; padding:16px 20px 24px; }
   .prov-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
@@ -315,8 +317,12 @@
         <svg viewBox="0 0 48 48" fill="none"><path d="M24 4L44 16V44H4V16L24 4Z" fill="#7FA3D1" stroke="#1B3A5C" stroke-width="2"/><path d="M18 44V26H30V44" fill="#fff" stroke="#1B3A5C" stroke-width="2"/><circle cx="24" cy="16" r="3" fill="#C9962C"/></svg>
         <span>SCHOENSTATT ARGENTINA</span>
       </div>
+      <div class="papa-photo-ring">
+        <img src="papa-leon-xiv.jpg" alt="Papa León XIV" onerror="this.parentElement.style.display='none'">
+      </div>
       <h2>Capital de Gracias</h2>
-      <p>Por la visita del Papa León XIV. Decinos desde qué provincia vas a sumar tu aporte — lo vamos a recordar en este dispositivo.</p>
+      <p class="prov-msg">Queremos juntar capital de gracias para rezar por la visita del Papa León XIV a la Argentina.</p>
+      <p>Decinos desde qué provincia vas a sumar tu aporte — lo vamos a recordar en este dispositivo.</p>
     </div>
     <div class="prov-scroll">
       <button class="btn-outline" id="prov-continue" style="display:flex; margin:4px auto 20px;">Elegir mi provincia</button>
