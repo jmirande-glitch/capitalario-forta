@@ -270,6 +270,39 @@
     padding:14px 22px; border-radius:14px; border:1.5px solid rgba(255,255,255,.35);
     color:var(--white); background:transparent; font-weight:700; font-size:14.5px; cursor:pointer;
   }
+
+  /* ---------- ONBOARDING (solo la primera vez) ---------- */
+  .onboarding-overlay{
+    position:absolute; inset:0; z-index:95;
+    opacity:0; pointer-events:none; transition:opacity .35s ease;
+  }
+  .onboarding-overlay.show{ opacity:1; pointer-events:auto; }
+  .onboarding-spot{
+    position:absolute; right:20px; bottom:24px; width:68px; height:68px; border-radius:50%;
+    box-shadow:0 0 0 9999px rgba(10,20,35,.8);
+  }
+  .onboarding-spot::after{
+    content:''; position:absolute; inset:-6px; border-radius:50%;
+    border:2.5px solid var(--gold-light); animation:onb-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes onb-pulse{
+    0%,100%{ transform:scale(1); opacity:1; }
+    50%{ transform:scale(1.12); opacity:.55; }
+  }
+  .onboarding-bubble{
+    position:absolute; right:16px; bottom:104px; max-width:190px;
+    background:var(--white); border-radius:14px; padding:13px 15px 12px; text-align:center;
+    box-shadow:0 10px 28px rgba(0,0,0,.35);
+  }
+  .onboarding-bubble p{ margin:0 0 9px; font-weight:800; font-size:13.5px; color:var(--navy); line-height:1.25; }
+  .onboarding-bubble::after{
+    content:''; position:absolute; right:28px; bottom:-7px; width:14px; height:14px;
+    background:var(--white); transform:rotate(45deg);
+  }
+  .onboarding-btn{
+    background:var(--gold); color:var(--navy-deep); border:none; border-radius:999px;
+    padding:7px 16px; font-weight:800; font-size:12px; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -286,7 +319,8 @@
       <p>Por la visita del Papa León XIV. Decinos desde qué provincia vas a sumar tu aporte — lo vamos a recordar en este dispositivo.</p>
     </div>
     <div class="prov-scroll">
-      <div class="prov-grid" id="prov-grid"></div>
+      <button class="btn-outline" id="prov-continue" style="display:flex; margin:4px auto 20px;">Elegir mi provincia</button>
+      <div class="prov-grid" id="prov-grid" style="display:none;"></div>
     </div>
   </section>
 
@@ -389,6 +423,15 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
     <span>¡Sumado al Capital de Gracias!</span>
   </div>
+
+  <!-- ================= ONBOARDING (solo primera vez) ================= -->
+  <div class="onboarding-overlay" id="onboarding-overlay">
+    <div class="onboarding-spot"></div>
+    <div class="onboarding-bubble">
+      <p>Acá cargás tu aporte 👆</p>
+      <button class="onboarding-btn" id="onboarding-dismiss">Entendido</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -468,6 +511,7 @@ document.querySelectorAll('[data-go]').forEach(el=>{
 });
 
 // ---------- selector de provincia ----------
+let provinciaTimer = null;
 function buildProvinciaGrid(){
   const grid = document.getElementById('prov-grid');
   grid.innerHTML = '';
@@ -481,16 +525,53 @@ function buildProvinciaGrid(){
     grid.appendChild(b);
   });
 }
+function revealProvinciaGrid(){
+  clearTimeout(provinciaTimer);
+  document.getElementById('prov-grid').style.display = 'grid';
+  document.getElementById('prov-continue').style.display = 'none';
+}
+document.getElementById('prov-continue').addEventListener('click', revealProvinciaGrid);
+
+// Primera vez: se ve la portada de bienvenida con el botón; si nadie toca
+// nada, a los 5 segundos aparecen las provincias solas.
+function openProvinciaScreenFirstTime(){
+  buildProvinciaGrid();
+  document.getElementById('prov-grid').style.display = 'none';
+  document.getElementById('prov-continue').style.display = 'flex';
+  go('provincia');
+  clearTimeout(provinciaTimer);
+  provinciaTimer = setTimeout(revealProvinciaGrid, 5000);
+}
+// Cuando alguien ya eligió provincia y quiere cambiarla desde el chip,
+// no hace falta el paso intermedio: van directo a la grilla.
+function openProvinciaScreenToChange(){
+  buildProvinciaGrid();
+  document.getElementById('prov-grid').style.display = 'grid';
+  document.getElementById('prov-continue').style.display = 'none';
+  go('provincia');
+}
 function setProvincia(id){
+  clearTimeout(provinciaTimer);
   myProvincia = id;
   localStorage.setItem('cdg_papa_provincia', id);
   document.getElementById('prov-chip-label').textContent = provName(id);
   go('home');
+  maybeShowOnboarding();
 }
-document.getElementById('prov-chip').addEventListener('click', ()=>{
-  buildProvinciaGrid();
-  go('provincia');
-});
+
+// ---------- onboarding (paso a paso, solo la primera vez) ----------
+function maybeShowOnboarding(){
+  if(localStorage.getItem('cdg_papa_onboarding_done')) return;
+  setTimeout(()=>{
+    document.getElementById('onboarding-overlay').classList.add('show');
+  }, 450); // espera a que termine la transición de pantalla
+}
+function dismissOnboarding(){
+  document.getElementById('onboarding-overlay').classList.remove('show');
+  localStorage.setItem('cdg_papa_onboarding_done', '1');
+}
+document.getElementById('onboarding-overlay').addEventListener('click', dismissOnboarding);
+document.getElementById('prov-chip').addEventListener('click', openProvinciaScreenToChange);
 
 // ---------- construir listado compacto de categorías en home ----------
 function buildCatList(){
@@ -713,8 +794,7 @@ async function handleQrIfPresent(){
   const cameFromQr = await handleQrIfPresent();
 
   if(!cameFromQr && !myProvincia){
-    buildProvinciaGrid();
-    go('provincia');
+    openProvinciaScreenFirstTime();
   } else {
     renderStats();
   }
