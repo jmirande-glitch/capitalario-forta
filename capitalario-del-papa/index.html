@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Capital de Gracias - Visita del Papa León XIV</title>
+<meta name="description" content="Sumá tu rosario, tu visita al Santuario o tu hora de adoración como capital de gracias por la venida del Papa León XIV a la Argentina.">
+
+<!-- ==========================================================
+     VISTA PREVIA AL COMPARTIR (WhatsApp, Facebook, etc.)
+     IMPORTANTE: reemplazar "og:image" y "og:url" por la URL
+     real una vez publicado, por ejemplo:
+     https://www.schoenstatt.org.ar/capital-papa/og-image.jpg
+     ========================================================== -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Capital de Gracias - Visita del Papa León XIV">
+<meta property="og:description" content="Sumá tu rosario, tu visita al Santuario o tu hora de adoración como capital de gracias por la venida del Papa León XIV a la Argentina.">
+<meta property="og:image" content="https://fortalecimientomatrimonial.com/capitalario-del-papa/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://fortalecimientomatrimonial.com/capitalario-del-papa/">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Capital de Gracias - Visita del Papa León XIV">
+<meta name="twitter:description" content="Sumá tu rosario, tu visita al Santuario o tu hora de adoración como capital de gracias por la venida del Papa León XIV a la Argentina.">
+<meta name="twitter:image" content="https://fortalecimientomatrimonial.com/capitalario-del-papa/og-image.jpg">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Abel&family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+
+  :root{
+    /* Paleta oficial según Manual de Comunicación Schoenstatt Argentina (5.2.2) */
+    --navy: #1B3A5C;
+    --navy-deep: #16324F;
+    --sky: #7FA3D1;
+    --gold: #C9962C;
+    --gold-light: #E3BD74;
+    --periwinkle: #6B7FC4;
+    --brownie: #6E4A2E;
+    --tan: #C98A4B;
+    --slate: #55606B;
+    --cream: #F6EFE0;
+    --ink: #1F2733;
+    --white: #FFFFFF;
+    --radius: 22px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0;padding:0;height:100%;background:var(--navy);}
+  body{font-family:'Open Sans',sans-serif; color:var(--ink); overscroll-behavior:none;}
+  h1,h2,h3,.display{font-family:'Abel',sans-serif;}
+
+  #app{
+    width:100%; max-width:520px; margin:0 auto;
+    height:100vh; height:100dvh; position:relative;
+    background:var(--cream); overflow:hidden;
+    box-shadow:0 0 60px rgba(0,0,0,.5);
+  }
+
+  .screen{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    opacity:0; pointer-events:none; transform:translateY(12px);
+    transition:opacity .28s ease, transform .28s ease;
+  }
+  .screen.active{ opacity:1; pointer-events:auto; transform:translateY(0); }
+
+  /* ---------- HERO / PORTADA ---------- */
+  .portada{
+    flex:0 0 auto;
+    background:radial-gradient(120% 140% at 50% -30%, #2E5480 0%, var(--navy) 55%, var(--navy-deep) 100%);
+    color:var(--white); text-align:center;
+    padding:16px 20px 14px; position:relative; overflow:hidden;
+  }
+  .logo-wrap{
+    background:var(--white); border-radius:14px; display:inline-flex; align-items:center;
+    gap:8px; padding:6px 14px 5px; margin-bottom:8px; box-shadow:0 8px 18px rgba(0,0,0,.28);
+  }
+  .logo-wrap svg{ width:26px; height:26px; }
+  .logo-wrap span{ font-family:'Abel',sans-serif; font-size:15px; color:var(--navy); letter-spacing:.02em; }
+
+  .papa-photo-ring{
+    width:88px; height:88px; border-radius:50%; margin:2px auto 8px;
+    border:3px solid var(--gold-light); padding:3px; background:rgba(255,255,255,.08);
+  }
+  .papa-photo-ring img{ width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
+
+  .portada h1{ font-size:clamp(19px,5.6vw,25px); line-height:1.08; margin:0 0 3px; font-weight:400; }
+  .portada .sub{ font-size:12.5px; color:#CBD8E4; margin:0 0 6px; font-weight:600; letter-spacing:.02em; }
+  .portada .fs{ font-family:'Abel',sans-serif; font-style:italic; font-size:13px; color:var(--gold-light); margin:2px 0 0; }
+
+  .prov-chip{
+    position:absolute; top:12px; left:12px;
+    display:flex; align-items:center; gap:5px;
+    background:rgba(255,255,255,.14); border:none; color:var(--white);
+    padding:6px 12px 6px 9px; border-radius:999px; cursor:pointer; font-size:12px; font-weight:700;
+  }
+  .prov-chip svg{ width:14px; height:14px; }
+
+  /* ---------- SCROLL AREA ---------- */
+  .scroll{ flex:1; overflow-y:auto; background:var(--cream); padding:18px 18px 110px; }
+
+  .total-band{
+    background:var(--white); border-radius:18px; padding:16px 18px;
+    text-align:center; border:1px solid #ece3cc; margin-bottom:16px;
+  }
+  .total-band .n{ font-family:'Abel',sans-serif; font-size:46px; color:var(--navy); line-height:1; }
+  .total-band .l{ font-size:12.5px; color:var(--slate); font-weight:700; letter-spacing:.02em; margin-top:2px; }
+
+  .section-title{
+    font-family:'Abel',sans-serif; font-size:19px; color:var(--navy);
+    margin:6px 0 10px; text-align:center;
+  }
+
+  /* ---------- MAPA HEXAGONAL DE PROVINCIAS ---------- */
+  .map-wrap{ background:var(--white); border-radius:20px; padding:16px 14px 12px; border:1px solid #ece3cc; margin-bottom:16px; display:flex; flex-direction:column; align-items:center; }
+  .map-note{ text-align:center; font-size:11px; color:#a89a6d; margin:2px 0 10px; }
+  .map-rows{ display:inline-flex; flex-direction:column; align-items:flex-start; gap:4px; }
+  .map-row{ display:flex; gap:4px; justify-content:flex-start; }
+  .hex-spacer{ width:44px; height:38px; flex-shrink:0; }
+  .hex-mini.hex{ width:18px; height:16px; }
+  .hex{
+    position:relative; width:44px; height:38px; overflow:hidden;
+    clip-path:polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background:#e7e0cb; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; cursor:pointer;
+  }
+  .hex-fill{
+    position:absolute; left:0; right:0; bottom:0; height:0%;
+    background:linear-gradient(180deg, var(--gold-light), var(--gold));
+    transition:height .7s cubic-bezier(.22,.9,.34,1);
+  }
+  .hex-count{ position:relative; z-index:2; font-family:'Abel',sans-serif; font-size:12px; font-weight:400; color:var(--navy-deep); }
+  .hex-mini .hex-count{ display:none; }
+  .map-caption{ text-align:center; font-size:12.5px; font-weight:700; color:var(--navy); min-height:16px; margin-top:12px; }
+
+  /* ---------- CATEGORÍAS ---------- */
+  .cat-list{ display:flex; flex-direction:column; gap:12px; margin-bottom:8px; }
+  .cat-card{
+    background:var(--white); border-radius:18px; border:1px solid #ece3cc;
+    padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer;
+  }
+  .cat-card:active{ background:#faf6ea; }
+  .cat-card .ic{
+    width:48px; height:48px; border-radius:14px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cat-card .ic svg{ width:26px; height:26px; }
+  .cat-card .txt{ flex:1; }
+  .cat-card .txt .t{ font-weight:800; font-size:15px; color:var(--navy); }
+  .cat-card .txt .d{ font-size:12px; color:var(--slate); margin-top:1px; }
+  .cat-card .num{ font-family:'Abel',sans-serif; font-size:26px; color:var(--navy); }
+
+  /* ---------- FRASE / CITA ---------- */
+  .quote-block{
+    background:var(--navy); color:var(--white); border-radius:18px;
+    padding:16px 18px; text-align:center; margin-top:4px;
+  }
+  .quote-block p{ font-family:'Abel',sans-serif; font-style:italic; font-size:14px; margin:0; color:var(--gold-light); line-height:1.35; }
+  .quote-block span{ display:block; margin-top:6px; font-size:10.5px; color:#9BAEC2; letter-spacing:.05em; }
+
+  /* ---------- FAB ---------- */
+  .fab{
+    position:absolute; right:20px; bottom:24px; width:68px; height:68px; border-radius:50%;
+    background:var(--gold); color:var(--navy-deep); border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 26px rgba(0,0,0,.35); z-index:30; animation:fab-pulse 2.4s ease-in-out infinite;
+  }
+  .fab svg{ width:30px; height:30px; }
+  .fab:active{ filter:brightness(.94); animation:none; }
+  @keyframes fab-pulse{
+    0%{box-shadow:0 10px 26px rgba(0,0,0,.35), 0 0 0 0 rgba(201,150,44,.55);}
+    70%{box-shadow:0 10px 26px rgba(0,0,0,.35), 0 0 0 16px rgba(201,150,44,0);}
+    100%{box-shadow:0 10px 26px rgba(0,0,0,.35), 0 0 0 0 rgba(201,150,44,0);}
+  }
+
+  /* ---------- SELECCIÓN DE CATEGORÍA (grid grande) ---------- */
+  #screen-grid{ background:linear-gradient(180deg, #EAF1F9 0%, var(--cream) 100%); }
+  .grid-header{
+    padding:18px 20px 8px; background:var(--navy); color:var(--white);
+    display:flex; align-items:center; gap:12px;
+  }
+  .backbtn{
+    width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.12);
+    border:none; color:var(--white); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
+  }
+  .backbtn svg{ width:19px; height:19px; }
+  .grid-header h2{ margin:0; font-size:18px; font-weight:700; }
+  .grid-cats{ flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .big-cat{
+    background:var(--white); border-radius:18px; border:1.5px solid #ece3cc;
+    padding:18px; display:flex; align-items:center; gap:16px; cursor:pointer;
+  }
+  .big-cat:active{ transform:scale(.985); }
+  .big-cat .ic{ width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .big-cat .ic svg{ width:30px; height:30px; }
+  .big-cat .t{ font-weight:800; font-size:16.5px; color:var(--navy); }
+  .big-cat .d{ font-size:12.5px; color:var(--slate); margin-top:2px; }
+
+  /* ---------- INPUT (STEPPER) ---------- */
+  #screen-input{ background:var(--cream); }
+  .input-hero{ padding:20px 20px 10px; display:flex; align-items:center; gap:14px; background:var(--navy); color:var(--white); }
+  .input-hero .hero-icon{ width:34px; height:34px; flex-shrink:0; }
+  .input-hero h2{ margin:0; font-size:19px; font-weight:700; }
+  .input-hero p{ margin:2px 0 0; font-size:13px; color:#B9C7D6; }
+
+  .stepper-area{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 24px 4px; }
+  .stepper{ display:flex; align-items:center; justify-content:center; gap:18px; width:100%; }
+  .step-btn{
+    width:74px; height:74px; border-radius:50%; border:none; background:var(--white);
+    box-shadow:0 3px 0 #ddd2ac; font-size:34px; font-weight:800; color:var(--navy);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .step-btn:active{ box-shadow:0 1px 0 #ddd2ac; transform:translateY(2px); }
+  .step-value{ min-width:150px; text-align:center; }
+  .step-value .n{ font-family:'Abel',sans-serif; font-size:84px; font-weight:400; color:var(--navy); line-height:1; }
+  .step-value .u{ font-size:15px; color:var(--slate); font-weight:600; margin-top:4px; }
+
+  .quick-amounts{ display:flex; gap:10px; margin-top:26px; flex-wrap:wrap; justify-content:center; }
+  .qa-btn{ padding:10px 18px; border-radius:999px; border:1.5px solid #d8cca3; background:var(--white); font-weight:700; font-size:15px; color:var(--navy); cursor:pointer; }
+  .qa-btn:active{ background:#efe6cd; }
+
+  .confirm-area{ padding:16px 20px 26px; }
+  .confirm-btn{
+    width:100%; padding:19px; border:none; border-radius:18px; background:var(--gold); color:var(--navy-deep);
+    font-size:19px; font-weight:800; font-family:'Open Sans',sans-serif; cursor:pointer;
+  }
+  .confirm-btn:active{ filter:brightness(.94); }
+  .anon-note{ text-align:center; font-size:12.5px; color:#8a8060; margin-top:10px; }
+
+  /* ---------- SELECTOR DE PROVINCIA (modal / pantalla obligatoria) ---------- */
+  #screen-provincia{
+    background:radial-gradient(120% 140% at 50% -20%, #2E5480 0%, var(--navy) 55%, var(--navy-deep) 100%);
+    color:var(--white); z-index:80;
+  }
+  .prov-header{ text-align:center; padding:34px 24px 10px; }
+  .prov-header .logo-wrap{ margin-bottom:12px; }
+  .prov-header h2{ margin:0 0 4px; font-size:22px; font-weight:400; }
+  .prov-header p{ margin:0; font-size:13px; color:#CBD8E4; max-width:320px; margin:0 auto; }
+  .prov-scroll{ flex:1; overflow-y:auto; padding:16px 20px 24px; }
+  .prov-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .prov-btn{
+    background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.16); color:var(--white);
+    border-radius:12px; padding:12px 10px; font-size:13px; font-weight:700; cursor:pointer; text-align:center;
+  }
+  .prov-btn:active{ background:rgba(201,150,44,.35); border-color:var(--gold); }
+
+  /* ---------- QR / CONFIRMACIÓN AUTOMÁTICA ---------- */
+  #screen-qr{
+    background:radial-gradient(120% 140% at 50% -20%, #2E5480 0%, var(--navy) 55%, var(--navy-deep) 100%);
+    color:var(--white); align-items:center; justify-content:center; text-align:center; padding:30px;
+  }
+  #screen-qr .check{ width:84px; height:84px; margin:0 auto 18px; }
+  #screen-qr h2{ font-size:24px; margin:0 0 8px; font-weight:400; }
+  #screen-qr p{ font-size:14px; color:#CBD8E4; max-width:300px; margin:0 auto 24px; }
+  #screen-qr .prov-name{ color:var(--gold-light); font-weight:800; }
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:absolute; left:50%; bottom:-120px; transform:translateX(-50%);
+    background:var(--navy); color:var(--white); padding:16px 26px; border-radius:16px;
+    font-weight:700; font-size:16px; display:flex; align-items:center; gap:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35); transition:bottom .35s ease; z-index:50; white-space:nowrap;
+  }
+  .toast.show{ bottom:26px; }
+  .toast svg{ width:22px; height:22px; color:var(--gold-light); }
+
+  .btn-outline{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 22px; border-radius:14px; border:1.5px solid rgba(255,255,255,.35);
+    color:var(--white); background:transparent; font-weight:700; font-size:14.5px; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= PANTALLA: ELEGIR PROVINCIA (primera vez) ================= -->
+  <section id="screen-provincia" class="screen">
+    <div class="prov-header">
+      <div class="logo-wrap">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 4L44 16V44H4V16L24 4Z" fill="#7FA3D1" stroke="#1B3A5C" stroke-width="2"/><path d="M18 44V26H30V44" fill="#fff" stroke="#1B3A5C" stroke-width="2"/><circle cx="24" cy="16" r="3" fill="#C9962C"/></svg>
+        <span>SCHOENSTATT ARGENTINA</span>
+      </div>
+      <h2>Capital de Gracias</h2>
+      <p>Por la visita del Papa León XIV. Decinos desde qué provincia vas a sumar tu aporte — lo vamos a recordar en este dispositivo.</p>
+    </div>
+    <div class="prov-scroll">
+      <div class="prov-grid" id="prov-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= PANTALLA: CONFIRMACIÓN AUTOMÁTICA POR QR ================= -->
+  <section id="screen-qr" class="screen">
+    <svg class="check" viewBox="0 0 84 84" fill="none"><circle cx="42" cy="42" r="40" fill="#C9962C"/><path d="M26 43l11 11 21-23" stroke="#16324F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h2>¡Visita registrada!</h2>
+    <p>Gracias por tu peregrinación al Santuario de <span class="prov-name" id="qr-prov-name">—</span>. Tu visita ya forma parte del Capital de Gracias por la venida del Papa León XIV.</p>
+    <button class="btn-outline" data-go="home">Ver el Capital de Gracias</button>
+  </section>
+
+  <!-- ================= PANTALLA: HOME ================= -->
+  <section id="screen-home" class="screen active">
+    <div class="portada">
+      <button class="prov-chip" id="prov-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span id="prov-chip-label">Elegir provincia</span>
+      </button>
+      <div class="logo-wrap">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M24 4L44 16V44H4V16L24 4Z" fill="#7FA3D1" stroke="#1B3A5C" stroke-width="2"/><path d="M18 44V26H30V44" fill="#fff" stroke="#1B3A5C" stroke-width="2"/><circle cx="24" cy="16" r="3" fill="#C9962C"/></svg>
+        <span>SCHOENSTATT ARGENTINA</span>
+      </div>
+      <div class="papa-photo-ring">
+        <!-- Reemplazar por el retrato oficial del Papa León XIV (Vatican Media, uso institucional).
+             Descargable en: https://www.vatican.va -->
+        <img src="papa-leon-xiv.jpg" alt="Papa León XIV" onerror="this.parentElement.style.display='none'">
+      </div>
+      <h1>Capital de Gracias</h1>
+      <p class="sub">Por la venida del Papa León XIV a la Argentina · Noviembre</p>
+      <p class="fs">"Alianza que transforma"</p>
+    </div>
+
+    <div class="scroll">
+      <div class="total-band">
+        <div class="n" id="stat-total">0</div>
+        <div class="l">APORTES DE TODO EL PAÍS</div>
+      </div>
+
+      <div class="section-title">Mapa de la Familia en oración</div>
+      <div class="map-wrap">
+        <div class="map-note">Cada provincia se va llenando de a poco, según sus aportes</div>
+        <div class="map-rows" id="map-rows"></div>
+        <div class="map-caption" id="map-caption">Tocá una provincia para ver su nombre y su aporte</div>
+      </div>
+
+      <div class="section-title">Nuestro aporte</div>
+      <div class="cat-list" id="cat-list"></div>
+
+      <div class="quote-block">
+        <p id="kentenich-quote">Cargando...</p>
+      </div>
+    </div>
+
+    <button class="fab" data-go="grid" aria-label="Sumar aporte">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#16324F" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+  </section>
+
+  <!-- ================= PANTALLA: ELEGIR CATEGORÍA ================= -->
+  <section id="screen-grid" class="screen">
+    <div class="grid-header">
+      <button class="backbtn" data-go="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h2>¿Qué querés sumar?</h2>
+    </div>
+    <div class="grid-cats" id="grid-cats"></div>
+  </section>
+
+  <!-- ================= PANTALLA: CARGAR CANTIDAD ================= -->
+  <section id="screen-input" class="screen">
+    <div class="input-hero">
+      <button class="backbtn" id="input-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <svg class="hero-icon" id="input-icon" viewBox="0 0 48 48" fill="none" stroke="#E3BD74" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></svg>
+      <div>
+        <h2 id="input-title">Categoría</h2>
+        <p id="input-example">Ejemplo</p>
+      </div>
+    </div>
+    <div class="stepper-area">
+      <div class="stepper">
+        <button class="step-btn" id="step-minus">–</button>
+        <div class="step-value">
+          <div class="n" id="step-num">1</div>
+          <div class="u" id="step-unit">unidades</div>
+        </div>
+        <button class="step-btn" id="step-plus">+</button>
+      </div>
+      <div class="quick-amounts" id="quick-amounts"></div>
+    </div>
+    <div class="confirm-area">
+      <button class="confirm-btn" id="confirm-btn">Sumar este aporte</button>
+      <p class="anon-note">Tu aporte se suma de forma anónima al Capital de Gracias de tu provincia.</p>
+    </div>
+  </section>
+
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    <span>¡Sumado al Capital de Gracias!</span>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// CAPITAL DE GRACIAS - Visita del Papa León XIV / Schoenstatt Argentina
+// =====================================================================
+
+// ---------- Supabase (mismo proyecto que "Forta 2026") ----------
+// Tabla nueva y propia de esta campaña: cdg_papa_aportes
+// Ver sql-setup-capital-papa.sql para crear la tabla y sus políticas.
+const SUPABASE_URL = 'https://ztfghhrswuxkjckqsnug.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_yeCcnRZEHUWE-slzI36daw_dHnrFPxe';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const TABLE = 'cdg_papa_aportes';
+
+// ---------- Provincias (24) con posición aproximada en la grilla hexagonal ----------
+// El mapa es esquemático (no a escala geográfica exacta), pensado para leerse
+// claramente en un teléfono, ordenado de norte a sur.
+const PROVINCIAS = [
+  {id:'jujuy', name:'Jujuy'}, {id:'formosa', name:'Formosa'},
+  {id:'salta', name:'Salta'}, {id:'chaco', name:'Chaco'}, {id:'misiones', name:'Misiones'},
+  {id:'catamarca', name:'Catamarca'}, {id:'santiago', name:'Sgo. del Estero'}, {id:'corrientes', name:'Corrientes'},
+  {id:'tucuman', name:'Tucumán'}, {id:'entrerios', name:'Entre Ríos'},
+  {id:'larioja', name:'La Rioja'}, {id:'cordoba', name:'Córdoba'}, {id:'santafe', name:'Santa Fe'},
+  {id:'sanjuan', name:'San Juan'}, {id:'sanluis', name:'San Luis'}, {id:'buenosaires', name:'Buenos Aires'}, {id:'caba', name:'CABA'},
+  {id:'mendoza', name:'Mendoza'}, {id:'lapampa', name:'La Pampa'},
+  {id:'neuquen', name:'Neuquén'}, {id:'rionegro', name:'Río Negro'},
+  {id:'chubut', name:'Chubut'},
+  {id:'santacruz', name:'Santa Cruz'},
+  {id:'tierradelfuego', name:'Tierra del Fuego'},
+];
+// Filas alineadas a la izquierda (forman el triángulo), distribución pedida
+// por el equipo de comunicación. La última fila incluye un espacio vacío y,
+// al final, dos hexágonos chicos sin nombrar que representan las Islas Malvinas.
+const MAP_ROWS = [
+  ['jujuy','salta','formosa','__spacer__','misiones'],
+  ['catamarca','tucuman','santiago','chaco'],
+  ['larioja','cordoba','santafe','corrientes'],
+  ['sanjuan','sanluis','entrerios','caba'],
+  ['mendoza','lapampa','buenosaires'],
+  ['neuquen','rionegro'],
+  ['chubut'],
+  ['santacruz'],
+  ['tierradelfuego','__spacer__','__malvinas__','__malvinas__'],
+];
+function provName(id){ const p = PROVINCIAS.find(p=>p.id===id); return p ? p.name : id; }
+
+// ---------- Categorías ----------
+const CATS = [
+  { id:'rosario', label:'Rezo del Rosario', unit:'rosarios', example:'Ej: 1 rosario completo, en familia o personal',
+    color:'#1B3A5C', bg:'#E7EEF6', default:1,
+    icon:'<circle cx="24" cy="10" r="3"/><circle cx="34" cy="14" r="3"/><circle cx="40" cy="22" r="3"/><circle cx="40" cy="32" r="3"/><circle cx="34" cy="40" r="3"/><circle cx="24" cy="44" r="3"/><circle cx="14" cy="40" r="3"/><circle cx="8" cy="32" r="3"/><circle cx="8" cy="22" r="3"/><circle cx="14" cy="14" r="3"/><path d="M24 44v-8" stroke-linecap="round"/>' },
+  { id:'visita', label:'Visita al Santuario', unit:'visitas', example:'Ej: peregrinación o visita breve al Santuario',
+    color:'#C9962C', bg:'#FBF3E2', default:1,
+    icon:'<path d="M24 6L42 18V42H6V18L24 6Z"/><path d="M18 42V26H30V42"/><circle cx="24" cy="18" r="2"/>' },
+  { id:'adoracion', label:'Adoración al Santísimo', unit:'horas', example:'Ej: 1 hora ante el Santísimo',
+    color:'#6B7FC4', bg:'#ECEEFA', default:1,
+    icon:'<circle cx="24" cy="24" r="12"/><path d="M24 6v6M24 36v6M6 24h6M36 24h6M11 11l4 4M33 33l4 4M11 37l4-4M33 15l4-4"/><path d="M24 20v8M20 24h8" stroke-linecap="round"/>' },
+];
+
+let currentCat = null, currentVal = 1;
+let myProvincia = localStorage.getItem('cdg_papa_provincia');
+let lastByProvCount = {};
+
+// ---------- navegación ----------
+function go(screenId){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const target = document.getElementById('screen-'+screenId);
+  target.classList.add('active');
+  target.scrollTop = 0;
+  const scrollable = target.querySelector('.scroll, .prov-scroll, .grid-cats');
+  if(scrollable) scrollable.scrollTop = 0;
+  if(screenId==='home') renderStats();
+}
+document.querySelectorAll('[data-go]').forEach(el=>{
+  el.addEventListener('click', ()=> go(el.dataset.go));
+});
+
+// ---------- selector de provincia ----------
+function buildProvinciaGrid(){
+  const grid = document.getElementById('prov-grid');
+  grid.innerHTML = '';
+  // Orden alfabético solo para elegir la provincia; el mapa mantiene su propio orden.
+  const alpha = [...PROVINCIAS].sort((a,b)=> a.name.localeCompare(b.name,'es'));
+  alpha.forEach(p=>{
+    const b = document.createElement('button');
+    b.className = 'prov-btn';
+    b.textContent = p.name;
+    b.addEventListener('click', ()=> setProvincia(p.id));
+    grid.appendChild(b);
+  });
+}
+function setProvincia(id){
+  myProvincia = id;
+  localStorage.setItem('cdg_papa_provincia', id);
+  document.getElementById('prov-chip-label').textContent = provName(id);
+  go('home');
+}
+document.getElementById('prov-chip').addEventListener('click', ()=>{
+  buildProvinciaGrid();
+  go('provincia');
+});
+
+// ---------- construir listado compacto de categorías en home ----------
+function buildCatList(){
+  const wrap = document.getElementById('cat-list');
+  wrap.innerHTML = '';
+  CATS.forEach(cat=>{
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.innerHTML = `
+      <div class="ic" style="background:${cat.bg}">
+        <svg viewBox="0 0 48 48" fill="none" stroke="${cat.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${cat.icon}</svg>
+      </div>
+      <div class="txt"><div class="t">${cat.label}</div><div class="d">Tocá + para sumar</div></div>
+      <div class="num" id="catnum-${cat.id}" style="color:${cat.color}">0</div>`;
+    card.addEventListener('click', ()=> openInput(cat));
+    wrap.appendChild(card);
+  });
+}
+
+// ---------- construir grilla grande de categorías ----------
+function buildGridCats(){
+  const wrap = document.getElementById('grid-cats');
+  wrap.innerHTML = '';
+  CATS.forEach(cat=>{
+    const card = document.createElement('div');
+    card.className = 'big-cat';
+    card.innerHTML = `
+      <div class="ic" style="background:${cat.bg}">
+        <svg viewBox="0 0 48 48" fill="none" stroke="${cat.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${cat.icon}</svg>
+      </div>
+      <div><div class="t">${cat.label}</div><div class="d">${cat.example}</div></div>`;
+    card.addEventListener('click', ()=> openInput(cat));
+    wrap.appendChild(card);
+  });
+}
+
+// ---------- pantalla de carga (stepper) ----------
+function openInput(cat){
+  currentCat = cat;
+  currentVal = cat.default;
+  document.getElementById('input-title').textContent = cat.label;
+  document.getElementById('input-example').textContent = cat.example;
+  document.getElementById('input-icon').innerHTML = cat.icon;
+  document.getElementById('step-unit').textContent = cat.unit;
+  updateStepDisplay();
+
+  const quick = document.getElementById('quick-amounts');
+  quick.innerHTML = '';
+  const suggestions = cat.id==='adoracion' ? [1,2,3] : cat.id==='rosario' ? [1,3,5] : [1,2];
+  suggestions.forEach(v=>{
+    const b = document.createElement('button');
+    b.className='qa-btn'; b.textContent = v + ' ' + cat.unit;
+    b.addEventListener('click', ()=>{ currentVal = v; updateStepDisplay(); });
+    quick.appendChild(b);
+  });
+
+  go('input');
+}
+function updateStepDisplay(){ document.getElementById('step-num').textContent = currentVal; }
+document.getElementById('input-back').addEventListener('click', ()=> go('grid'));
+document.getElementById('step-minus').addEventListener('click', ()=>{ currentVal = Math.max(1, currentVal-1); updateStepDisplay(); });
+document.getElementById('step-plus').addEventListener('click', ()=>{ currentVal = currentVal+1; updateStepDisplay(); });
+
+document.getElementById('confirm-btn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('confirm-btn');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  const ok = await pushAporte(currentCat.id, currentVal, myProvincia, 'app');
+  btn.disabled = false; btn.textContent = 'Sumar este aporte';
+  if(ok){ showToast(); setTimeout(()=> go('home'), 900); }
+  else { alert('No se pudo guardar tu aporte. Revisá tu conexión a internet e intentá de nuevo.'); }
+});
+function showToast(){
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 1400);
+}
+
+// ---------- Supabase: leer / escribir ----------
+async function fetchAportes(){
+  const { data, error } = await sb.from(TABLE).select('provincia, categoria, cantidad, created_at');
+  if(error){ console.error('Error leyendo aportes:', error); return null; }
+  return data;
+}
+async function pushAporte(catId, cantidad, provincia, origen){
+  const { error } = await sb.from(TABLE).insert({
+    categoria: catId, cantidad: cantidad, provincia: provincia || 'sin_provincia', origen: origen || 'app'
+  });
+  if(error){ console.error('Error guardando aporte:', error); return false; }
+  return true;
+}
+
+// Tiempo real: si alguien más carga un aporte, el mapa y los totales se actualizan solos.
+sb.channel('cdg_papa_aportes_live')
+  .on('postgres_changes', { event:'INSERT', schema:'public', table: TABLE }, ()=>{
+    if(document.getElementById('screen-home').classList.contains('active')) renderStats();
+  })
+  .subscribe();
+
+// ---------- render del mapa hexagonal ----------
+function buildMapSkeleton(){
+  const wrap = document.getElementById('map-rows');
+  wrap.innerHTML = '';
+  let miniCount = 0;
+  MAP_ROWS.forEach(row=>{
+    const rowEl = document.createElement('div');
+    rowEl.className = 'map-row';
+    row.forEach(id=>{
+      if(id === '__spacer__'){
+        const sp = document.createElement('div');
+        sp.className = 'hex-spacer';
+        rowEl.appendChild(sp);
+        return;
+      }
+      if(id === '__malvinas__'){
+        miniCount++;
+        const hex = document.createElement('div');
+        hex.className = 'hex hex-mini';
+        hex.id = 'hex-malvinas-'+miniCount;
+        rowEl.appendChild(hex);
+        return;
+      }
+      const hex = document.createElement('div');
+      hex.className = 'hex';
+      hex.id = 'hex-'+id;
+      hex.innerHTML = `<div class="hex-fill" id="fill-${id}"></div><span class="hex-count" id="count-${id}">0</span>`;
+      hex.addEventListener('click', ()=>{
+        const n = lastByProvCount[id] || 0;
+        document.getElementById('map-caption').textContent =
+          n === 0 ? `${provName(id)}: todavía sin aportes` : `${provName(id)}: ${n} aporte${n===1?'':'s'}`;
+      });
+      rowEl.appendChild(hex);
+    });
+    wrap.appendChild(rowEl);
+  });
+}
+
+async function renderStats(){
+  const rows = await fetchAportes();
+  if(rows === null){
+    document.getElementById('stat-total').textContent = '–';
+    return;
+  }
+  document.getElementById('stat-total').textContent = rows.length;
+
+  // por categoría
+  const sums = {}; CATS.forEach(c=> sums[c.id] = 0);
+  rows.forEach(r=>{ sums[r.categoria] = (sums[r.categoria]||0) + Number(r.cantidad); });
+  CATS.forEach(c=>{
+    const el = document.getElementById('catnum-'+c.id);
+    if(el) el.textContent = sums[c.id];
+  });
+
+  // por provincia (para el mapa) — relleno progresivo, no binario
+  const byProv = {};
+  rows.forEach(r=>{ byProv[r.provincia] = (byProv[r.provincia]||0) + 1; });
+  lastByProvCount = byProv;
+  const maxCount = Math.max(1, ...PROVINCIAS.map(p=> byProv[p.id]||0));
+  PROVINCIAS.forEach(p=>{
+    const count = byProv[p.id] || 0;
+    // escala en raíz cuadrada: así el primer aporte ya se nota, y no hace
+    // falta que una provincia "gane" para que las demás se vean vacías.
+    const pct = count === 0 ? 0 : Math.max(10, (Math.sqrt(count)/Math.sqrt(maxCount))*100);
+    const fillEl = document.getElementById('fill-'+p.id);
+    const countEl = document.getElementById('count-'+p.id);
+    if(fillEl) fillEl.style.height = pct+'%';
+    if(countEl) countEl.textContent = count;
+  });
+}
+
+// ---------- frase del Padre Kentenich ----------
+const QUOTES = [
+  '"Todo lo que se hace con amor es semilla de un mundo nuevo."',
+  '"Como el pájaro ama su nido, amo yo mi Santuario."',
+  '"Rezar significa hallar, en todo momento, un camino hacia Dios."',
+  '"Nada sin ti, nada sin nosotros."',
+];
+function renderQuote(){
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  const q = QUOTES[dayOfYear % QUOTES.length];
+  document.getElementById('kentenich-quote').innerHTML = q + '<span>— P. José Kentenich</span>';
+}
+
+// ---------- QR: cada Santuario/provincia tiene su propio link ----------
+// Formato del link para imprimir en el QR de cada Santuario:
+//   https://fortalecimientomatrimonial.com/capitalario-del-papa/?qr=visita&prov=cordoba
+// Al escanearlo, se suma automáticamente 1 "visita" para esa provincia,
+// sin pasos adicionales, y se muestra la pantalla de confirmación.
+async function handleQrIfPresent(){
+  const params = new URLSearchParams(window.location.search);
+  const qr = params.get('qr');
+  const prov = params.get('prov');
+  if(qr !== 'visita' || !prov || !PROVINCIAS.find(p=>p.id===prov)) return false;
+
+  // evita duplicar el conteo si la página se recarga en los siguientes 30s
+  const dedupeKey = 'cdg_papa_qr_'+prov;
+  const last = Number(sessionStorage.getItem(dedupeKey) || 0);
+  const now = Date.now();
+  document.getElementById('qr-prov-name').textContent = provName(prov);
+
+  // si venís sin provincia guardada todavía, esta visita también la fija como "tu" provincia
+  if(!myProvincia){ myProvincia = prov; localStorage.setItem('cdg_papa_provincia', prov); }
+
+  if(now - last > 30000){
+    await pushAporte('visita', 1, prov, 'qr');
+    sessionStorage.setItem(dedupeKey, String(now));
+  }
+  go('qr');
+  return true;
+}
+
+// ---------- inicio ----------
+(async function init(){
+  buildMapSkeleton();
+  buildCatList();
+  buildGridCats();
+  renderQuote();
+
+  if(myProvincia) document.getElementById('prov-chip-label').textContent = provName(myProvincia);
+
+  const cameFromQr = await handleQrIfPresent();
+
+  if(!cameFromQr && !myProvincia){
+    buildProvinciaGrid();
+    go('provincia');
+  } else {
+    renderStats();
+  }
+})();
+</script>
+</body>
+</html>
