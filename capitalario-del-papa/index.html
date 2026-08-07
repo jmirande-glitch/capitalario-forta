@@ -557,10 +557,10 @@ document.getElementById('step-plus').addEventListener('click', ()=>{ currentVal 
 document.getElementById('confirm-btn').addEventListener('click', async ()=>{
   const btn = document.getElementById('confirm-btn');
   btn.disabled = true; btn.textContent = 'Guardando...';
-  const ok = await pushAporte(currentCat.id, currentVal, myProvincia, 'app');
+  const errMsg = await pushAporte(currentCat.id, currentVal, myProvincia, 'app');
   btn.disabled = false; btn.textContent = 'Sumar este aporte';
-  if(ok){ showToast(); setTimeout(()=> go('home'), 900); }
-  else { alert('No se pudo guardar tu aporte. Revisá tu conexión a internet e intentá de nuevo.'); }
+  if(!errMsg){ showToast(); setTimeout(()=> go('home'), 900); }
+  else { alert('No se pudo guardar tu aporte.\n\nDetalle técnico: ' + errMsg + '\n\n(Si dice "does not exist", falta correr el script SQL en Supabase. Si dice "row-level security" o "permission", falta configurar las políticas.)'); }
 });
 function showToast(){
   const t = document.getElementById('toast');
@@ -578,8 +578,8 @@ async function pushAporte(catId, cantidad, provincia, origen){
   const { error } = await sb.from(TABLE).insert({
     categoria: catId, cantidad: cantidad, provincia: provincia || 'sin_provincia', origen: origen || 'app'
   });
-  if(error){ console.error('Error guardando aporte:', error); return false; }
-  return true;
+  if(error){ console.error('Error guardando aporte:', error); return error.message || 'Error desconocido'; }
+  return null;
 }
 
 // Tiempo real: si alguien más carga un aporte, el mapa y los totales se actualizan solos.
