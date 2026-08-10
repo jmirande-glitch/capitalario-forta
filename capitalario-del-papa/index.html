@@ -173,6 +173,16 @@
   .quote-block p{ font-family:'Abel',sans-serif; font-style:italic; font-size:14px; margin:0; color:var(--gold-light); line-height:1.35; }
   .quote-block span{ display:block; margin-top:6px; font-size:10.5px; color:#9BAEC2; letter-spacing:.05em; }
 
+  .psalm-block{
+    background:var(--white); border:1px solid #ece3cc; border-radius:18px;
+    padding:18px 20px 16px; margin-bottom:16px;
+    color:var(--ink); font-size:13.5px; line-height:1.65; white-space:pre-line;
+  }
+  .psalm-cite{
+    display:block; text-align:right; margin-top:12px; font-family:'Abel',sans-serif;
+    font-size:13px; font-weight:400; color:var(--gold); letter-spacing:.03em;
+  }
+
   /* ---------- FAB ---------- */
   .fab{
     position:absolute; right:20px; bottom:24px; width:68px; height:68px; border-radius:50%;
@@ -200,7 +210,8 @@
   }
   .backbtn svg{ width:19px; height:19px; }
   .grid-header h2{ margin:0; font-size:18px; font-weight:700; }
-  .grid-cats{ flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .grid-scroll{ flex:1; overflow-y:auto; }
+  .grid-cats{ padding:16px; display:flex; flex-direction:column; gap:12px; }
   .big-cat{
     background:var(--white); border-radius:18px; border:1.5px solid #ece3cc;
     padding:18px; display:flex; align-items:center; gap:16px; cursor:pointer;
@@ -414,7 +425,28 @@
       </button>
       <h2>¿Qué querés sumar?</h2>
     </div>
-    <div class="grid-cats" id="grid-cats"></div>
+    <div class="grid-scroll">
+      <div class="grid-cats" id="grid-cats"></div>
+      <div class="psalm-block" style="margin:-4px 16px 20px;">¡Manifiéstanos, Señor, tu misericordia
+y danos tu salvación!
+
+Voy a proclamar lo que dice el Señor:
+el Señor promete la paz,
+la paz para su pueblo y sus amigos,
+y para los que se convierten de corazón.
+
+Su salvación está muy cerca de sus fieles,
+y la gloria habitará en nuestra tierra.
+El amor y la verdad se encontrarán,
+la justicia y la paz se abrazarán;
+la verdad brotará de la tierra
+y la justicia mirará desde el cielo.
+
+El mismo Señor nos dará sus bienes
+y nuestra tierra producirá sus frutos.
+La justicia irá delante de él,
+y la Paz, sobre la huella de sus pasos.<span class="psalm-cite">Salmo 85</span></div>
+    </div>
   </section>
 
   <!-- ================= PANTALLA: CARGAR CANTIDAD ================= -->
@@ -537,7 +569,7 @@ function go(screenId){
   const target = document.getElementById('screen-'+screenId);
   target.classList.add('active');
   target.scrollTop = 0;
-  const scrollable = target.querySelector('.scroll, .prov-scroll, .grid-cats');
+  const scrollable = target.querySelector('.scroll, .prov-scroll, .grid-scroll');
   if(scrollable) scrollable.scrollTop = 0;
   if(screenId==='home') renderStats();
 }
